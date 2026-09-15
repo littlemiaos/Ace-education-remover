@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>PVG</title>
+    <link rel="stylesheet" href="ui.css" />
+  </head>
+  <body class="popup-body">
+    <div class="row" style="padding-top: 0">
+      <strong class="grow">PVG Presence Guard</strong>
+      <span class="pill" id="master">—</span>
+    </div>
+
+    <div class="panel" style="margin: 10px 0 12px">
+      <div class="desc" style="margin: 0 0 6px">输入注入网址</div>
+      <input
+        type="text"
+        id="target"
+        class="grow"
+        style="width: 100%"
+        placeholder="example.com 或 *.example.com"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <div class="inline" style="margin-top: 9px">
+        <button class="primary grow" id="arm">开始注入</button>
+      </div>
+      <div class="hint" id="armHint">
+        点按后扩展才会为该源取得权限并注册,注册只在本次浏览器会话内有效。
+      </div>
+
+      <div class="inline" style="margin-top: 10px">
+        <button id="injectNow" style="font-size: 12px; padding: 4px 10px">仅注入当前页 · 不刷新</button>
+      </div>
+      <div class="desc">
+        不刷新就抢不到 <code>document_start</code> 时序:页面若在加载时已经读过一次
+        <code>document.hidden</code>,那一次就已经输了。
+      </div>
+    </div>
+
+    <div class="panel" style="margin: 0 0 12px">
+      <div class="desc" style="margin: 0 0 4px">当前已注入(仅本次浏览器会话)</div>
+      <ul class="sites" id="armedList"></ul>
+      <div class="hint" id="armedEmpty">没有已注入的目标。扩展不会自动作用于任何页面。</div>
+      <div class="inline" style="margin-top: 10px">
+        <button id="stopAll" class="danger" style="font-size: 12px; padding: 4px 10px">
+          全部停止并收回授权
+        </button>
+        <button id="revokeExtras" class="hidden" style="font-size: 12px; padding: 4px 10px">
+          收回未使用的授权
+        </button>
+      </div>
+    </div>
+
+    <div class="inline">
+      <button id="openOptions">设置…</button>
+      <div class="grow"></div>
+      <span class="pill" id="timingPill">—</span>
+    </div>
+
+    <script src="patterns.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

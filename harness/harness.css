@@ -1,0 +1,267 @@
+:root {
+  --bg: #101216;
+  --panel: #191c22;
+  --panel-2: #21252d;
+  --line: #303541;
+  --fg: #e7e9ef;
+  --dim: #98a0af;
+  --ok: #35c07f;
+  --warn: #e0a33a;
+  --bad: #e05a5a;
+  --info: #4c8dff;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 14px/1.65 system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+}
+
+.wrap {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 26px 20px 80px;
+}
+
+h1 {
+  font-size: 21px;
+  margin: 0 0 6px;
+}
+
+h2 {
+  font-size: 15px;
+  margin: 30px 0 12px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--line);
+}
+
+p.sub,
+.dim {
+  color: var(--dim);
+}
+
+p.sub {
+  margin: 0 0 20px;
+  font-size: 13.5px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 15px 17px;
+  margin-bottom: 14px;
+}
+
+.card {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.metric .k {
+  font-size: 12px;
+  color: var(--dim);
+}
+
+.metric .v {
+  font-family: var(--mono);
+  font-size: 17px;
+  margin-top: 2px;
+}
+
+.metric .n {
+  font-size: 11.5px;
+  color: var(--dim);
+  margin-top: 3px;
+}
+
+button {
+  background: var(--panel-2);
+  color: var(--fg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 7px 14px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--info);
+}
+
+button.primary {
+  background: var(--info);
+  border-color: var(--info);
+  color: #fff;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.inline {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 6px 9px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+  vertical-align: top;
+}
+
+th {
+  color: var(--dim);
+  font-weight: 500;
+  position: sticky;
+  top: 0;
+  background: var(--panel);
+}
+
+td.mono,
+.mono {
+  font-family: var(--mono);
+}
+
+td.num {
+  text-align: right;
+  font-family: var(--mono);
+}
+
+.verdict {
+  font-size: 11.5px;
+  padding: 1px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.verdict.pass {
+  color: var(--ok);
+  border-color: rgba(53, 192, 127, 0.4);
+  background: rgba(53, 192, 127, 0.1);
+}
+
+.verdict.leak {
+  color: var(--bad);
+  border-color: rgba(224, 90, 90, 0.4);
+  background: rgba(224, 90, 90, 0.1);
+}
+
+.verdict.warn {
+  color: var(--warn);
+  border-color: rgba(224, 163, 58, 0.4);
+  background: rgba(224, 163, 58, 0.1);
+}
+
+.verdict.info {
+  color: var(--info);
+  border-color: rgba(76, 141, 255, 0.4);
+  background: rgba(76, 141, 255, 0.1);
+}
+
+.note {
+  color: var(--dim);
+  font-size: 11.5px;
+}
+
+.phase {
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+.countdown {
+  font-family: var(--mono);
+  font-size: 30px;
+  text-align: center;
+  padding: 8px 0;
+}
+
+.steps {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--dim);
+  font-size: 13px;
+}
+
+.steps li {
+  margin: 3px 0;
+}
+
+.bar {
+  height: 6px;
+  background: var(--panel-2);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.bar > i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--info);
+  transition: width 0.2s;
+}
+
+.flag {
+  display: inline-block;
+  min-width: 20px;
+  text-align: center;
+  font-family: var(--mono);
+}
+
+strong.hi {
+  color: var(--fg);
+}
+
+.hidden {
+  display: none !important;
+}
+
+details summary {
+  cursor: pointer;
+  color: var(--dim);
+  font-size: 13px;
+}
+
+details[open] summary {
+  margin-bottom: 8px;
+}
+
+ul.plain {
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
+
+ul.plain li {
+  margin: 4px 0;
+  font-size: 13px;
+  color: var(--dim);
+}

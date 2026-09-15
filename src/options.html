@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>PVG Presence Guard · 设置</title>
+    <link rel="stylesheet" href="ui.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>PVG Presence Guard</h1>
+      <p class="sub">
+        注入范围由弹窗里的「开始注入」按钮决定 —— 输入网址,点一下,扩展才为该源取权限并注册。
+        注册只存在于本次浏览器会话,关掉浏览器就没了。
+      </p>
+
+      <div class="panel">
+        <div class="row">
+          <label class="switch">
+            <input type="checkbox" id="enabled" />
+            <span>总开关</span>
+          </label>
+          <div class="grow"></div>
+          <span class="pill" id="regStatus">—</span>
+        </div>
+        <div class="desc" id="regDetail"></div>
+      </div>
+
+      <h2>注入</h2>
+      <div class="panel">
+        <div class="desc" style="margin: 0 0 8px">
+          这里是只读视图。要新增目标,请点扩展图标,在弹窗里输入网址并按「开始注入」。
+        </div>
+        <ul class="sites" id="armedList"></ul>
+        <div class="hint" id="armedEmpty">没有已注入的目标。扩展不会自动作用于任何页面。</div>
+        <div class="inline" style="margin-top: 10px">
+          <button id="stopAll" class="danger">全部停止并收回授权</button>
+          <button id="revokeExtras" class="hidden">收回未使用的授权</button>
+          <button id="resync">重新同步注册</button>
+        </div>
+        <div class="desc">
+          <strong>为什么必须手动点:</strong>
+          它换掉的是「常驻能力」——不再有一份写好的名单让扩展自动作用于某些站点,作用范围始终等于你此时此刻点过的那些源。
+          但它并不是检测机制:点击检测不到任何人的意图,也挡不住自动化点击。真正的收敛来自「不持久」和「随时可收回」这两点。
+        </div>
+      </div>
+
+      <h2>遮蔽项</h2>
+      <div class="panel">
+        <div class="row">
+          <label class="switch">
+            <input type="checkbox" id="fVisibility" />
+            <span>Page Visibility API</span>
+          </label>
+          <div class="grow"></div>
+          <span class="pill">document.hidden / visibilityState / visibilitychange</span>
+        </div>
+        <div class="row">
+          <label class="switch">
+            <input type="checkbox" id="fFocus" />
+            <span>窗口焦点</span>
+          </label>
+          <div class="grow"></div>
+          <span class="pill">hasFocus / blur / focus / activeElement</span>
+        </div>
+        <div class="row">
+          <label class="switch">
+            <input type="checkbox" id="fLifecycle" />
+            <span>生命周期事件</span>
+          </label>
+          <div class="grow"></div>
+          <span class="pill warn">会改变站点真实离站行为</span>
+        </div>
+        <div class="desc">
+          打开后 <code>pagehide</code> / <code>beforeunload</code> / <code>unload</code> 不再投递 ——
+          页面自己的「确认离开」提示、卸载埋点都不会执行。自检时它会让被测对象行为失真,
+          所以默认关闭,需要时再开。
+        </div>
+        <div class="desc">
+          <strong>改动遮蔽项或时序策略会改变注册的文件集合,已武装的页面需要刷新才生效</strong>(或重新点一次「开始注入」)。
+        </div>
+      </div>
+
+      <h2>时序遮蔽</h2>
+      <div class="panel">
+        <div class="row">
+          <span>策略</span>
+          <div class="grow"></div>
+          <select id="timing">
+            <option value="off">off — 不打补丁(基线)</option>
+            <option value="freeze">freeze — 仅冻结时钟</option>
+            <option value="replay">replay — 虚拟调度器 + 补投递(推荐)</option>
+          </select>
+        </div>
+        <div class="desc" id="timingDesc"></div>
+
+        <h3>预算</h3>
+        <div class="row">
+          <span class="grow">每轮最多推进的虚拟时间 (ms)</span>
+          <input type="number" id="optMaxVirtual" min="1000" step="1000" style="width: 110px" />
+        </div>
+        <div class="row">
+          <span class="grow">每轮最多补投递的回调数</span>
+          <input type="number" id="optMaxCallbacks" min="100" step="100" style="width: 110px" />
+        </div>
+        <div class="row">
+          <span class="grow">低于此间隔的高频计时器只补一次 (ms)</span>
+          <input type="number" id="optMinReplay" min="4" step="4" style="width: 110px" />
+        </div>
+        <div class="desc">
+          预算是这套方案唯一「既省 CPU 又完全隐身」的取舍点:补投递被截断的部分会变成
+          客户端时钟相对墙钟的漂移。harness 会把实际漂移量出来。
+        </div>
+      </div>
+
+      <h2>自检</h2>
+      <div class="panel stack">
+        <div class="desc" style="margin: 0">
+          自检页会逐项测量四类信号,并用 <strong>Worker 自身的真实时钟</strong> 做交叉验证 ——
+          那是本扩展不覆盖的一路,能诚实地告诉你还剩多少可被抓的量。
+        </div>
+        <div class="inline">
+          <button id="openHarness">打开检测页</button>
+          <button id="copyHarnessPath">复制本地服务命令</button>
+        </div>
+        <div class="hint" id="harnessCmd"></div>
+      </div>
+
+      <h2>诊断</h2>
+      <div class="panel">
+        <table>
+          <tbody id="diag"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script src="patterns.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>

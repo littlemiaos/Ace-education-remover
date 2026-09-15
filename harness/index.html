@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PVG 泄漏检测 harness</title>
+    <link rel="stylesheet" href="harness.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>PVG 泄漏检测 harness</h1>
+      <p class="sub">
+        逐项测量「一个页面还能不能看出你不在前台」。判定的关键在于:<strong>不用被测的时钟去证明被测的时钟</strong> ——
+        所有涉及时间的结论都用 Worker 里的真实时钟和服务器 <code>Date</code> 头做交叉验证,那两路是本扩展不覆盖的。
+      </p>
+
+      <div class="panel">
+        <div class="inline">
+          <button class="primary" id="runInstant">重新检测即时项</button>
+          <button id="saveBaseline">保存为基线</button>
+          <button id="clearBaseline">清除基线</button>
+          <div class="grow"></div>
+          <span class="note" id="baselineState">无基线</span>
+        </div>
+        <div class="note" style="margin-top: 8px">
+          建议先用「off」策略或把本页从白名单移除跑一遍基线,再打开遮蔽跑一遍,对比同一批检查项的判定差异。
+        </div>
+      </div>
+
+      <h2>1 · 即时快照</h2>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 30%">检查项</th>
+            <th style="width: 24%">观测值</th>
+            <th style="width: 16%">遮蔽后期望</th>
+            <th style="width: 10%">判定</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody id="instantBody"></tbody>
+      </table>
+
+      <h2>2 · 后台测量</h2>
+      <div class="panel">
+        <div class="inline">
+          <button class="primary" id="startBg">开始后台测量</button>
+          <button id="finishBg" disabled>我回来了 · 出报告</button>
+          <div class="grow"></div>
+          <span class="note" id="bgState">未开始</span>
+        </div>
+        <div id="bgRunner" class="hidden">
+          <div class="countdown" id="countdown">—</div>
+          <ol class="steps">
+            <li>点击「开始后台测量」后,立刻切到<strong>另一个窗口</strong>(不是同一个窗口里的另一个标签,否则窗口焦点不会真的丢)。</li>
+            <li>保持离开 <strong id="targetSecs">15</strong> 秒以上。倒计时按 Worker 的真实时钟走,不受遮蔽影响。</li>
+            <li>切回来,点「我回来了 · 出报告」。后台期间采集到的数据会自动汇总。</li>
+          </ol>
+          <div class="bar"><i id="bgBar"></i></div>
+        </div>
+      </div>
+
+      <div class="grid" id="bgMetrics"></div>
+      <table id="bgTable" class="hidden" style="margin-top: 14px">
+        <thead>
+          <tr>
+            <th style="width: 30%">检查项</th>
+            <th style="width: 24%">观测值</th>
+            <th style="width: 16%">遮蔽后期望</th>
+            <th style="width: 10%">判定</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody id="bgBody"></tbody>
+      </table>
+
+      <h2>3 · 独立时钟</h2>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 30%">时钟</th>
+            <th style="width: 24%">与页面时钟的差</th>
+            <th style="width: 16%">期望</th>
+            <th style="width: 10%">判定</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody id="clockBody"></tbody>
+      </table>
+
+      <h2>4 · 已知缺口</h2>
+      <div class="panel">
+        <div class="note" style="margin-bottom: 10px">
+          下面这些是本实现<strong>不覆盖</strong>的判定面。它们不是「待办」,而是这套方案的原理性边界 ——
+          任何客户端遮蔽都躲不过「页面存在一个我们没接管的时钟」这件事。
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 30%">判定面</th>
+              <th style="width: 14%">本次是否被抓</th>
+              <th>说明与可选缓解</th>
+            </tr>
+          </thead>
+          <tbody id="gapBody"></tbody>
+        </table>
+      </div>
+
+      <h2>5 · 结论</h2>
+      <div class="panel" id="summary">尚无数据。</div>
+
+      <iframe id="childBlank" style="display: none"></iframe>
+      <iframe id="childSrcdoc" srcdoc="<p>x</p>" style="display: none"></iframe>
+    </div>
+
+    <script src="detector.js"></script>
+  </body>
+</html>

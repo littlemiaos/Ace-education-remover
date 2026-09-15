@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "No more ace education",
+  "version": "1.0.0",
+  "description": "自用自查工具:仅在显式加入白名单的域名上统一可见性 / 焦点 / 生命周期 / 时序信号,并配套泄漏检测基线页。",
+  "minimum_chrome_version": "119",
+  "permissions": [
+    "storage",
+    "scripting",
+    "activeTab"
+  ],
+  "optional_host_permissions": [
+    "*://*/*"
+  ],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "options_ui": {
+    "page": "src/options.html",
+    "open_in_tab": true
+  },
+  "action": {
+    "default_title": "PVG Presence Guard",
+    "default_popup": "src/popup.html"
+  }
+}
